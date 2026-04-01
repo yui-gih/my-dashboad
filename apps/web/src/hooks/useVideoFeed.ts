@@ -24,6 +24,8 @@ export function useVideoFeed(limit = 20) {
         priorityScore: v.priority_score ?? 0,
         summary: v.summary ?? { oneLiner: v.title, keyPoints: [], watchReason: "" },
         transcriptSource: v.transcript_source ?? "title_only",
+        analysisVersion: v.analysis_version ?? "1.0",
+        llmTokensUsed: v.llm_tokens_used ?? 0,
         analyzedAt: v.analyzed_at ?? v.published_at ?? "",
       };
     }
