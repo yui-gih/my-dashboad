@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://hnfrhvnmztussknsemey.supabase.co/rest/v1/portfolio_holdings?limit=1\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuZnJodm5tenR1c3NrbnNlbWV5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzM4NjAyMSwiZXhwIjoyMDg4OTYyMDIxfQ.4egSZoITR2L7MBsrz8muCzBKhwp_2rXQTbnQnqFCwcA\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuZnJodm5tenR1c3NrbnNlbWV5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzM4NjAyMSwiZXhwIjoyMDg4OTYyMDIxfQ.4egSZoITR2L7MBsrz8muCzBKhwp_2rXQTbnQnqFCwcA\")",
+      "Bash(curl -s \"https://hnfrhvnmztussknsemey.supabase.co/rest/v1/quota_logs?limit=1\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuZnJodm5tenR1c3NrbnNlbWV5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzM4NjAyMSwiZXhwIjoyMDg4OTYyMDIxfQ.4egSZoITR2L7MBsrz8muCzBKhwp_2rXQTbnQnqFCwcA\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuZnJodm5tenR1c3NrbnNlbWV5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzM4NjAyMSwiZXhwIjoyMDg4OTYyMDIxfQ.4egSZoITR2L7MBsrz8muCzBKhwp_2rXQTbnQnqFCwcA\")",
+      "Bash(curl -s \"https://www.googleapis.com/youtube/v3/search?part=snippet&q=Lovely+Grooming&type=channel&maxResults=5&key=AIzaSyDfB4017-chCZYx8q1O86PgSAH0gD6bjYU\")",
+      "Bash(python3 -c \":*)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(''''portfolio OK:'''', d.get\\(''''portfolio'''', {}\\).get\\(''''totalValue''''\\), ''''fxRate:'''', d.get\\(''''fxRate''''\\)\\)\")"
+    ]
+  }
+}
