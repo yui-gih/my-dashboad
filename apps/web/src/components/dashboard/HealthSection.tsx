@@ -1,12 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import type { HealthRecord } from "@/app/page";
 
 interface Props {
   records: HealthRecord[];
 }
-
-const AGENT_URL = process.env.NEXT_PUBLIC_AGENT_URL ?? "http://localhost:8000";
 
 function Ring({
   value,
@@ -59,7 +58,7 @@ function MetricCard({ icon, label, value, unit, max, color, ringColor }: MetricC
       <div className="flex-1 min-w-0">
         <p className="text-[10px] text-zinc-500 uppercase tracking-wider">{label}</p>
         {value != null ? (
-          <p className={`text-xl font-bold leading-tight ${color}`}>
+          <p className={`text-xl font-bold leading-tight ${color}`} suppressHydrationWarning>
             {typeof value === "number" && !Number.isInteger(value)
               ? value.toFixed(1)
               : value.toLocaleString()}
@@ -74,7 +73,11 @@ function MetricCard({ icon, label, value, unit, max, color, ringColor }: MetricC
 }
 
 function SetupGuide() {
-  const endpoint = `${AGENT_URL}/api/health/data`;
+  const [agentUrl, setAgentUrl] = useState("http://localhost:8000");
+  useEffect(() => {
+    setAgentUrl(process.env.NEXT_PUBLIC_AGENT_URL ?? "http://localhost:8000");
+  }, []);
+  const endpoint = `${agentUrl}/api/health/data`;
   return (
     <div className="rounded-xl border border-zinc-700/50 bg-gradient-to-b from-zinc-800/60 to-zinc-900 p-5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)] space-y-4">
       <div className="flex items-center gap-2">
@@ -139,6 +142,9 @@ function SetupGuide() {
 }
 
 function WeekChart({ records }: { records: HealthRecord[] }) {
+  const [todayStr, setTodayStr] = useState("");
+  useEffect(() => { setTodayStr(new Date().toISOString().slice(0, 10)); }, []);
+
   if (records.length < 2) return null;
   const maxSteps = Math.max(...records.map((r) => r.steps ?? 0), 10000);
   const sorted = [...records].sort((a, b) => a.date.localeCompare(b.date));
@@ -148,7 +154,7 @@ function WeekChart({ records }: { records: HealthRecord[] }) {
       <div className="flex items-end gap-1.5 h-16">
         {sorted.map((r) => {
           const pct = (r.steps ?? 0) / maxSteps;
-          const isToday = r.date === new Date().toISOString().slice(0, 10);
+          const isToday = todayStr !== "" && r.date === todayStr;
           return (
             <div key={r.date} className="flex-1 flex flex-col items-center gap-1">
               <div className="w-full relative flex items-end" style={{ height: "48px" }}>

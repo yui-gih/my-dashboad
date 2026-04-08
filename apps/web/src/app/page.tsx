@@ -44,7 +44,7 @@ type PortfolioResponse = {
 const FALLBACK_PORTFOLIO: PortfolioResponse = {
   portfolio: {
     totalValue: 0, totalCost: 0, totalPnl: 0, totalPnlPercent: 0,
-    topMover: null, holdings: [], hasMockData: true, updatedAt: new Date().toISOString(),
+    topMover: null, holdings: [], hasMockData: true, updatedAt: "1970-01-01T00:00:00.000Z",
   },
   weather: { description: "不明", temp: 20, location: "東京" },
   advice: "エージェントサーバーに接続できませんでした。",
@@ -89,7 +89,7 @@ export default async function HomePage() {
         </div>
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse" />
-          <span className="text-xs text-zinc-600 font-mono">
+          <span className="text-xs text-zinc-600 font-mono" suppressHydrationWarning>
             {new Date().toLocaleDateString("ja-JP", {
               weekday: "short", year: "numeric", month: "short", day: "numeric",
             })}

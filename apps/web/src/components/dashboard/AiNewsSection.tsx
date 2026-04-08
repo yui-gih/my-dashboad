@@ -42,7 +42,7 @@ function ArticleCard({ article }: { article: AiArticle }) {
             </p>
           )}
         </div>
-        <span className="shrink-0 text-[10px] text-zinc-600 font-mono mt-0.5">
+        <span className="shrink-0 text-[10px] text-zinc-600 font-mono mt-0.5" suppressHydrationWarning>
           {formatDate(article.publishedAt)}
         </span>
       </div>

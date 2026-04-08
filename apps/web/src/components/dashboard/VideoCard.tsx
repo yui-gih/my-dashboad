@@ -78,7 +78,7 @@ export function VideoCard({ video }: Props) {
             <span className={`text-[10px] font-mono ${sourceInfo.color}`}>
               [{sourceInfo.label}]
             </span>
-            <span className="text-[10px] text-zinc-600">
+            <span className="text-[10px] text-zinc-600" suppressHydrationWarning>
               {new Date(video.publishedAt).toLocaleDateString("ja-JP")}
             </span>
           </div>
