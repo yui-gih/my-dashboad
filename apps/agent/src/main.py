@@ -25,18 +25,10 @@ app = FastAPI(
     description="YouTube解析・ニュース収集・ポートフォリオ管理エージェント",
 )
 
-_cors_origins = [o.strip() for o in (
-    settings.allowed_origins if hasattr(settings, "allowed_origins") and settings.allowed_origins
-    else "http://localhost:3000"
-).split(",")]
-
-_allow_all = _cors_origins == ["*"]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_cors_origins,
-    allow_origin_regex=r".*" if _allow_all else None,
-    allow_credentials=not _allow_all,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
