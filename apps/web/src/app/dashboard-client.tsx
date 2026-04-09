@@ -60,8 +60,7 @@ export function DashboardClient({ initialData }: Props) {
   async function handleRunAgent() {
     setIsTriggering(true);
     try {
-      const agentUrl = process.env.NEXT_PUBLIC_AGENT_URL ?? "http://localhost:8000";
-      const res = await fetch(`${agentUrl}/api/agent/youtube/run`, { method: "POST" });
+      const res = await fetch(`/api/agent/youtube/run`, { method: "POST" });
       const data = await res.json();
       setRunId(data.runId);
     } catch (e) {

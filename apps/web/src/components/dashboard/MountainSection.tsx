@@ -76,8 +76,7 @@ export function MountainSection({ mountains }: Props) {
     setSearchResult(null);
     setSearchError(null);
     try {
-      const agentUrl = process.env.NEXT_PUBLIC_AGENT_URL ?? "http://localhost:8000";
-      const res = await fetch(`${agentUrl}/api/mountains/search?q=${encodeURIComponent(query.trim())}`);
+      const res = await fetch(`/api/mountains/search?q=${encodeURIComponent(query.trim())}`);
       const data = await res.json();
       if (data.error) {
         setSearchError(data.error);
