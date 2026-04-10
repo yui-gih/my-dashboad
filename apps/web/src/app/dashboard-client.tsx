@@ -50,6 +50,7 @@ function SectionHeader({ icon, title, count }: { icon: string; title: string; co
 export function DashboardClient({ initialData }: Props) {
   const [runId, setRunId] = useState<string | null>(null);
   const [isTriggering, setIsTriggering] = useState(false);
+  const [videoLimit, setVideoLimit] = useState(5);
 
   const { videos } = useVideoFeed(20);
   const { steps, done } = useAgentStream(runId);
@@ -95,16 +96,26 @@ export function DashboardClient({ initialData }: Props) {
                 {isRunning ? "解析中..." : "今すぐ更新"}
               </button>
             </div>
-            <div className="h-96 overflow-y-auto space-y-3 pr-1">
+            <div className="space-y-3 pr-1">
               {displayVideos.length === 0 ? (
                 <div className="text-center py-8 text-zinc-600 text-sm">
                   <p>動画データがありません</p>
                   <p className="text-xs mt-1">「今すぐ更新」でエージェントを実行してください</p>
                 </div>
               ) : (
-                displayVideos.map((video) => (
-                  <VideoCard key={video.videoId} video={video} />
-                ))
+                <>
+                  {displayVideos.slice(0, videoLimit).map((video) => (
+                    <VideoCard key={video.videoId} video={video} />
+                  ))}
+                  {videoLimit < displayVideos.length && (
+                    <button
+                      onClick={() => setVideoLimit((v) => v + 5)}
+                      className="w-full text-xs py-2 rounded-lg border border-zinc-700/50 bg-zinc-800/50 hover:bg-zinc-700/50 hover:border-zinc-600 text-zinc-400 hover:text-zinc-200 transition-all"
+                    >
+                      もっと表示 ({displayVideos.length - videoLimit}件)
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </section>
