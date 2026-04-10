@@ -16,9 +16,6 @@ class Settings(BaseSettings):
     supabase_anon_key: str = ""
     supabase_service_role_key: str = ""
 
-    # News
-    news_api_key: str = ""
-
     # Weather
     openweather_api_key: str = ""
 

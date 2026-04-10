@@ -10,7 +10,6 @@ from typing import TypedDict, Annotated
 import operator
 
 import feedparser
-import httpx
 from anthropic import AsyncAnthropic
 from langgraph.graph import StateGraph, END
 
@@ -25,6 +24,9 @@ RSS_SOURCES = [
     ("Reuters (JP)", "https://feeds.reuters.com/reuters/JPBusinessNews"),
     ("NHK経済", "https://www3.nhk.or.jp/rss/news/cat6.xml"),
     ("Bloomberg JP", "https://feeds.bloomberg.co.jp/bloomberg/businessnews"),
+    ("Google ニュース", "https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja"),
+    ("Google ニュース (ビジネス)", "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ja&gl=JP&ceid=JP:ja"),
+    ("Google ニュース (テクノロジー)", "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=ja&gl=JP&ceid=JP:ja"),
 ]
 
 
@@ -59,25 +61,6 @@ def fetch_rss(state: NewsState) -> dict:
                 })
         except Exception as e:
             logger.error(f"RSS fetch failed for {source_name}: {e}")
-
-    # News API (設定されている場合)
-    if settings.news_api_key:
-        try:
-            response = httpx.get(
-                "https://newsapi.org/v2/top-headlines",
-                params={"country": "jp", "category": "business", "apiKey": settings.news_api_key},
-                timeout=10,
-            )
-            for article in response.json().get("articles", [])[:10]:
-                articles.append({
-                    "title": article["title"] or "",
-                    "url": article["url"] or "",
-                    "source": article["source"]["name"],
-                    "published_at": article.get("publishedAt"),
-                    "content": article.get("description") or article.get("title", ""),
-                })
-        except Exception as e:
-            logger.error(f"News API fetch failed: {e}")
 
     logger.info(f"Fetched {len(articles)} raw articles")
     return {"raw_articles": articles}
