@@ -247,7 +247,7 @@ _strava_token_cache: dict = {}
 async def get_strava_access_token() -> str:
     """リフレッシュトークンからアクセストークンを取得（キャッシュあり）"""
     import time
-    if _strava_token_cache.get("expires_at", 0) > time.time() + 60:
+    if isinstance(_strava_token_cache.get("expires_at"), (int, float)) and _strava_token_cache["expires_at"] > time.time() + 60:
         return _strava_token_cache["access_token"]
 
     async with httpx.AsyncClient() as http:
@@ -262,6 +262,8 @@ async def get_strava_access_token() -> str:
             timeout=10,
         )
         data = resp.json()
+        if not isinstance(data, dict) or "access_token" not in data:
+            raise ValueError(f"Strava token error: {data}")
         _strava_token_cache["access_token"] = data["access_token"]
         _strava_token_cache["expires_at"] = data["expires_at"]
         return data["access_token"]
