@@ -241,14 +241,16 @@ async def get_ai_news(limit: int = 20):
 # Strava
 # ──────────────────────────────────────────────
 
-_strava_token_cache: dict = {}
+_strava_access_token: str = ""
+_strava_token_expires_at: float = 0.0
 
 
 async def get_strava_access_token() -> str:
     """リフレッシュトークンからアクセストークンを取得（キャッシュあり）"""
     import time
-    if isinstance(_strava_token_cache.get("expires_at"), (int, float)) and _strava_token_cache["expires_at"] > time.time() + 60:
-        return _strava_token_cache["access_token"]
+    global _strava_access_token, _strava_token_expires_at
+    if _strava_access_token and _strava_token_expires_at > time.time() + 60:
+        return _strava_access_token
 
     async with httpx.AsyncClient() as http:
         resp = await http.post(
@@ -264,9 +266,9 @@ async def get_strava_access_token() -> str:
         data = resp.json()
         if not isinstance(data, dict) or "access_token" not in data:
             raise ValueError(f"Strava token error: {data}")
-        _strava_token_cache["access_token"] = data["access_token"]
-        _strava_token_cache["expires_at"] = data["expires_at"]
-        return data["access_token"]
+        _strava_access_token = data["access_token"]
+        _strava_token_expires_at = float(data["expires_at"])
+        return _strava_access_token
 
 
 SPORT_ICON = {
