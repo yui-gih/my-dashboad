@@ -238,6 +238,101 @@ async def get_ai_news(limit: int = 20):
 
 
 # ──────────────────────────────────────────────
+# Strava
+# ──────────────────────────────────────────────
+
+_strava_token_cache: dict = {}
+
+
+async def get_strava_access_token() -> str:
+    """リフレッシュトークンからアクセストークンを取得（キャッシュあり）"""
+    import time
+    if _strava_token_cache.get("expires_at", 0) > time.time() + 60:
+        return _strava_token_cache["access_token"]
+
+    async with httpx.AsyncClient() as http:
+        resp = await http.post(
+            "https://www.strava.com/oauth/token",
+            data={
+                "client_id": settings.strava_client_id,
+                "client_secret": settings.strava_client_secret,
+                "refresh_token": settings.strava_refresh_token,
+                "grant_type": "refresh_token",
+            },
+            timeout=10,
+        )
+        data = resp.json()
+        _strava_token_cache["access_token"] = data["access_token"]
+        _strava_token_cache["expires_at"] = data["expires_at"]
+        return data["access_token"]
+
+
+SPORT_ICON = {
+    "Run": "🏃",
+    "Ride": "🚴",
+    "Swim": "🏊",
+    "Walk": "🚶",
+    "Hike": "🥾",
+    "WeightTraining": "🏋️",
+    "Yoga": "🧘",
+    "Workout": "💪",
+}
+
+
+@router.get("/strava/activities")
+async def get_strava_activities(limit: int = 10):
+    if not settings.strava_client_id:
+        return {"activities": [], "athlete": None}
+    try:
+        token = await get_strava_access_token()
+        async with httpx.AsyncClient() as http:
+            acts_resp = await http.get(
+                "https://www.strava.com/api/v3/athlete/activities",
+                headers={"Authorization": f"Bearer {token}"},
+                params={"per_page": limit},
+                timeout=15,
+            )
+            athlete_resp = await http.get(
+                "https://www.strava.com/api/v3/athlete",
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=10,
+            )
+        activities = []
+        for a in acts_resp.json():
+            sport = a.get("sport_type") or a.get("type", "Workout")
+            dist = a.get("distance", 0)
+            elapsed = a.get("elapsed_time", 0)
+            moving = a.get("moving_time", 0)
+            activities.append({
+                "id": a["id"],
+                "name": a.get("name", ""),
+                "sport": sport,
+                "icon": SPORT_ICON.get(sport, "🏅"),
+                "date": a.get("start_date_local", "")[:10],
+                "distanceKm": round(dist / 1000, 2) if dist else None,
+                "elapsedSec": elapsed,
+                "movingSec": moving,
+                "elevationM": a.get("total_elevation_gain"),
+                "avgHeartRate": a.get("average_heartrate"),
+                "maxHeartRate": a.get("max_heartrate"),
+                "avgSpeedKph": round(a.get("average_speed", 0) * 3.6, 1) if a.get("average_speed") else None,
+                "kudos": a.get("kudos_count", 0),
+                "sufferScore": a.get("suffer_score"),
+            })
+        athlete = athlete_resp.json()
+        return {
+            "activities": activities,
+            "athlete": {
+                "name": f"{athlete.get('firstname', '')} {athlete.get('lastname', '')}".strip(),
+                "profile": athlete.get("profile_medium"),
+            },
+        }
+    except Exception as e:
+        logger.warning(f"Strava fetch failed: {e}")
+        return {"activities": [], "athlete": None}
+
+
+# ──────────────────────────────────────────────
 # 健康データ (iPhone Shortcuts 連携)
 # ──────────────────────────────────────────────
 

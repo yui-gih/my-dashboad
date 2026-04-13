@@ -10,9 +10,9 @@ import { NewsSection } from "@/components/dashboard/NewsSection";
 import { PortfolioWidget } from "@/components/dashboard/PortfolioWidget";
 import { MountainSection } from "@/components/dashboard/MountainSection";
 import { AiNewsSection } from "@/components/dashboard/AiNewsSection";
-import { HealthSection } from "@/components/dashboard/HealthSection";
+import { StravaSection } from "@/components/dashboard/StravaSection";
 import type { VideoAnalysis, NewsArticle, PortfolioSummary } from "@repo/types";
-import type { MountainWeather, AiArticle, HealthRecord } from "@/app/page";
+import type { MountainWeather, AiArticle, StravaData } from "@/app/page";
 
 interface Props {
   initialData: {
@@ -32,7 +32,7 @@ interface Props {
     };
     mountains: MountainWeather[];
     aiArticles: AiArticle[];
-    healthRecords: HealthRecord[];
+    strava: StravaData;
   };
 }
 
@@ -133,11 +133,11 @@ export function DashboardClient({ initialData }: Props) {
             </div>
           </section>
 
-          {/* 健康 */}
+          {/* Strava */}
           <section className="space-y-3">
-            <SectionHeader icon="❤️" title="健康" />
+            <SectionHeader icon="🏅" title="Strava" count={`${initialData.strava.activities.length}件`} />
             <div className="h-96 overflow-y-auto pr-1">
-              <HealthSection records={initialData.healthRecords} />
+              <StravaSection data={initialData.strava} />
             </div>
           </section>
         </div>

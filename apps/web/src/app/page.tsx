@@ -34,6 +34,28 @@ export type HealthRecord = {
   weight: number | null;
 };
 
+export type StravaActivity = {
+  id: number;
+  name: string;
+  sport: string;
+  icon: string;
+  date: string;
+  distanceKm: number | null;
+  elapsedSec: number;
+  movingSec: number;
+  elevationM: number | null;
+  avgHeartRate: number | null;
+  maxHeartRate: number | null;
+  avgSpeedKph: number | null;
+  kudos: number;
+  sufferScore: number | null;
+};
+
+export type StravaData = {
+  activities: StravaActivity[];
+  athlete: { name: string; profile: string | null } | null;
+};
+
 type PortfolioResponse = {
   portfolio: PortfolioSummary;
   weather: { description: string; temp: number; location: string };
@@ -52,14 +74,14 @@ const FALLBACK_PORTFOLIO: PortfolioResponse = {
 };
 
 async function loadData() {
-  const [videosRes, articlesRes, portfolioRes, quotaRes, mountainsRes, aiNewsRes, healthRes] = await Promise.allSettled([
+  const [videosRes, articlesRes, portfolioRes, quotaRes, mountainsRes, aiNewsRes, stravaRes] = await Promise.allSettled([
     fetchApi<{ videos: VideoAnalysis[] }>("/agent/youtube/videos?limit=20"),
     fetchApi<{ articles: NewsArticle[] }>("/agent/news/articles?limit=15"),
     fetchApi<PortfolioResponse>("/portfolio/summary"),
     fetchApi<{ usedToday: number; remaining: number; limit: number; usagePercent: number }>("/quota/status"),
     fetchApi<{ mountains: MountainWeather[] }>("/mountains/weather"),
     fetchApi<{ articles: AiArticle[] }>("/agent/ai-news/articles?limit=20"),
-    fetchApi<{ data: HealthRecord[] }>("/health/data?days=7"),
+    fetchApi<StravaData>("/strava/activities?limit=10"),
   ]);
 
   return {
@@ -71,7 +93,7 @@ async function loadData() {
     },
     mountains: mountainsRes.status === "fulfilled" ? mountainsRes.value.mountains : [],
     aiArticles: aiNewsRes.status === "fulfilled" ? aiNewsRes.value.articles : [],
-    healthRecords: healthRes.status === "fulfilled" ? healthRes.value.data : [],
+    strava: stravaRes.status === "fulfilled" ? stravaRes.value : { activities: [], athlete: null },
   };
 }
 
