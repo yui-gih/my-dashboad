@@ -282,7 +282,7 @@ SPORT_ICON = {
 @router.get("/strava/activities")
 async def get_strava_activities(limit: int = 10):
     if not settings.strava_client_id:
-        return {"activities": [], "athlete": None}
+        return {"activities": [], "athlete": None, "debug": "STRAVA_CLIENT_ID not set"}
     try:
         token = await get_strava_access_token()
         async with httpx.AsyncClient() as http:
@@ -329,7 +329,7 @@ async def get_strava_activities(limit: int = 10):
         }
     except Exception as e:
         logger.warning(f"Strava fetch failed: {e}")
-        return {"activities": [], "athlete": None}
+        return {"activities": [], "athlete": None, "debug": str(e)}
 
 
 # ──────────────────────────────────────────────
